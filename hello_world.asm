@@ -95,6 +95,14 @@ LoadPalettesLoop:
   STA $0201                     ; tile number = 0
   STA $0202                     ; color pallete = 0, no flipping
 
+  LDA #$88
+  STA $0204                     ; put sprite 0 in center ($80) of screen vertically
+  STA $0207                     ; put sprite 0 in center ($80) of screen horizontally
+  LDA #$00
+  STA $0205                     ; tile number = 0
+  STA $0206                     ; color pallete = 0, no flipping
+
+
   LDA #%10000000                 ; enable NMI, sprites from pattern table 0
   STA $2000
 
