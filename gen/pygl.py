@@ -1,4 +1,5 @@
 import numpy as np
+from typing import Tuple
 
 
 def normalized(a, axis=-1, order=2):
@@ -46,7 +47,8 @@ def edge_function(p0, p1, p2):
         The sign of the value tells which side of the line p0p1 that p2 lies.
         Defined as the cross product of <p2-p0> and <p1-p0>
     '''
-    return (p2.x - p0.x) * (p1.y - p0.y) - (p2.y - p0.y) * (p1.x - p0.x)
+    #return (p2.x - p0.x) * (p1.y - p0.y) - (p2.y - p0.y) * (p1.x - p0.x)
+    return (p2[0] - p0[0]) * (p1[1] - p0[1]) - (p2[1] - p0[1]) * (p1[0] - p0[0])
 
 
 def contains_point(p0, p1, p2, p):
@@ -61,7 +63,8 @@ def contains_point(p0, p1, p2, p):
     w1 = edge_function(p2, p0, p)
     w2 = edge_function(p0, p1, p)
 
-    if area == 0: return False
+    if area == 0:
+        return False
 
     # Barycentric coordinates are calculated as the areas of the three sub-triangles divided
     # by the area of the whole triangle.
@@ -91,38 +94,45 @@ class RenderTarget(object):
 
     def pixel(self, x, y, color):
         width, height, _ = self.img.shape
-        self.img[int(width/2 + x * width/2), int(height/2 - y*height/2)] = color
+        self.img[int(x), int(y)] = color
 
-    def triangle(self, p0, p1, p2):
-        width, height = self.img.shape
+    def triangle(self, t, color):
+        p0, p1, p2 = [np.array(x).ravel().astype(int) for x in t]
+        width, height, _ = self.img.shape
         # First calculate a bounding box for this triangle so we don't have to iterate over the entire image
         # Clamped to the bounds of the image
-        xmin = max(min(p0.x, p1.x, p2.x), 0)
-        xmax = min(max(p0.x, p1.x, p2.x), width)
-        ymin = max(min(p0.y, p1.y, p2.y), 0)
-        ymax = min(max(p0.y, p1.y, p2.y), height)
+        xmin = max(min(p0[0], p1[0], p2[0]), 0)
+        xmax = min(max(p0[0], p1[0], p2[0]), width)
+        ymin = max(min(p0[1], p1[1], p2[1]), 0)
+        ymax = min(max(p0[1], p1[1], p2[1]), height)
 
         # Iterate over all pixels in the bounding box, test if they lie inside in the triangle
         # If they do, set that pixel with the barycentric color of that point
         for x in range(xmin, xmax):
             for y in range(ymin, ymax):
-                point_in_triangle, color, zValue = self.contains_point(Point(x, y, color=None))
-                if point_in_triangle:
-                    # Check z-buffer to determine whether to draw this pixel
-                    if zBuffer[y*image.width + x] < zValue:
-                        zBuffer[y*image.width + x] = zValue
-                        image.setPixel(x, y, color)
+                if contains_point(p0, p1, p2, (x, y, 1, 1)):
+                    self.img[x, y] = color
+
+
+def get_screen(ndc: np.array, shape: Tuple[int, int]) -> np.array:
+    width, height, _ = shape
+    center = np.array([width/2, height/2, 0, 0])
+    scale = np.array([width/2, height/2, 1, 1])
+    return center + np.multiply(ndc, scale)
 
 
 def render(img: np.array, model: Model, projection: np.array):
-    screen = projection * np.vstack((model.vertices.T, np.ones((1,12))))
+    # transform points to camera space
+    ndc = (projection * np.vstack((model.vertices.T, np.ones((1,12))))).T
+    # divide and scale into screen space
+    screen = get_screen(ndc, img.shape)
+
     target = RenderTarget(img)
-    #for face in model.faces:
+    for face in model.faces:
+        target.triangle(screen[face], color=(255, 0, 255, 255))
 
-        #target.triang()
-
-    for s in screen.T:
-        x, y, z, w = s[0,0], s[0,1], s[0,2], s[0,3]
-        target.pixel(x, y, color=(255, 0, 255, 255))
+    #for s in screen:
+    #    x, y, z, w = s[0,0], s[0,1], s[0,2], s[0,3]
+    #    target.pixel(x, y, color=(255, 0, 255, 255))
     
 
