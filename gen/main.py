@@ -15,6 +15,9 @@ def main():
     im = np.zeros((64, 64, 4), 'uint8')
     render(im, cube, projection)
 
+    # 8x16 tiles
+    # 8x4 blocks
+    # 64x64 total
     with open('image.png', 'wb') as f:
         f.write(png.write(im.tobytes(), 64, 64))
     
