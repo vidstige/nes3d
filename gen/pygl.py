@@ -123,13 +123,20 @@ def get_screen(ndc: np.array, shape: Tuple[int, int]) -> np.array:
 
 def render(img: np.array, model: Model, projection: np.array):
     # transform points to camera space
-    ndc = (projection * np.vstack((model.vertices.T, np.ones((1,12))))).T
+    camera_vertices = (projection * np.vstack((model.vertices.T, np.ones((1,12))))).T
+    normal_transform = np.linalg.inv(projection).T
+
     # divide and scale into screen space
-    screen = get_screen(ndc, img.shape)
+    screen = get_screen(camera_vertices, img.shape)
+
+    ambient = np.array([0, 0, 0, 255])
+    directional = np.array([255, 0, 255, 255]), np.array([0, 0, -1])
 
     target = RenderTarget(img)
-    for face in model.faces:
-        target.triangle(screen[face], color=(255, 0, 255, 255))
+    for face, normal in zip(model.faces, model.face_normals):
+        directional_color, direction = directional
+        color = np.clip(ambient + max(np.dot(normal, direction), 0) * directional_color, 0, 255)
+        target.triangle(screen[face], color)
 
     #for s in screen:
     #    x, y, z, w = s[0,0], s[0,1], s[0,2], s[0,3]
