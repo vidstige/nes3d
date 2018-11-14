@@ -15,10 +15,20 @@
   .bank 0                       ; bank 0
   .org $C000                    ; starts at location $C000
 
+;; Macro to place sprites
+;; place sprite-index, x, y
+.macro place
+    LDA \3
+    STA $0200 + 4 * \1
+    LDA \2
+    STA $0203 + 4 * \1
+  .endm
+
   ;; program's code goes here
 RESET:
   SEI                           ; disable IRQs
   CLD                           ; disable decimal mode
+
 
   ;; PALETTES
   ;; Before putting any graphics on the screen, you first need to set the color palette.
@@ -88,23 +98,28 @@ LoadPalettesLoop:
   ;;  +-------- Generate an NMI at the start of the
   ;;            vertical blanking interval vblank (0: off; 1: on)
 
-  LDA #$80
-  STA $0200                     ; put sprite 0 in center ($80) of screen vertically
-  STA $0203                     ; put sprite 0 in center ($80) of screen horizontally
+  LDA #%10100000                 ; enable NMI, sprites from pattern table 0
+  STA $2000
+
+  ;; Place sprites
+  place 0, #$10, #$80
+  place 0, #$10, #$80
+  
+  ; LDA #$80
+  ; STA $0200                     ; put sprite 0 in center ($80) of screen vertically
+  ; STA $0203                     ; put sprite 0 in center ($80) of screen horizontally
   LDA #$00
   STA $0201                     ; tile number = 0
   STA $0202                     ; color pallete = 0, no flipping
 
-  LDA #$88
-  STA $0204                     ; put sprite 0 in center ($80) of screen vertically
-  STA $0207                     ; put sprite 0 in center ($80) of screen horizontally
-  LDA #$00
-  STA $0205                     ; tile number = 0
-  STA $0206                     ; color pallete = 0, no flipping
+  ;; LDA #$88
+  ;; STA $0204                     ; put sprite in center ($80) of screen vertically
+  ;; STA $0207                     ; put sprite in center ($80) of screen horizontally
+  ;; LDA #$01
+  ;; STA $0205                     ; tile number = 0
+  ;; LDA #$00
+  ;; STA $0206                     ; color pallete = 0, no flipping
 
-
-  LDA #%10000000                 ; enable NMI, sprites from pattern table 0
-  STA $2000
 
     ;; Set up the PPU
   ;; PPUMASK ($2001)
