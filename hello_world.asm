@@ -15,13 +15,24 @@
   .bank 0                       ; bank 0
   .org $C000                    ; starts at location $C000
 
+
 ;; Macro to place sprites
 ;; place sprite-index, x, y
-.macro place
+  .macro place
     LDA \3
     STA $0200 + 4 * \1
     LDA \2
     STA $0203 + 4 * \1
+
+    LDA #$00
+    STA $0202 + 4 * \1  ; color palette = 0, no flipping
+  .endm
+
+  ;; set sprite number to tile number
+  ;; sprite 0 44
+  .macro sprite
+    LDA \2
+    STA $0201 + 4 * \1
   .endm
 
   ;; program's code goes here
@@ -102,15 +113,30 @@ LoadPalettesLoop:
   STA $2000
 
   ;; Place sprites
-  place 0, #$10, #$80
-  place 0, #$10, #$80
+  place 0, #$60, #$40
+  place 1, #$68, #$40
+  place 2, #$70, #$40
+  place 3, #$78, #$40
+  place 4, #$80, #$40
+  place 5, #$88, #$40
+  place 6, #$90, #$40
+  place 7, #$98, #$40
   
+  sprite 0, #0
+  sprite 1, #0
+  sprite 2, #0
+  sprite 3, #0
+  sprite 4, #0
+  sprite 5, #0
+  sprite 6, #0
+  sprite 7, #0
+
   ; LDA #$80
   ; STA $0200                     ; put sprite 0 in center ($80) of screen vertically
   ; STA $0203                     ; put sprite 0 in center ($80) of screen horizontally
-  LDA #$00
-  STA $0201                     ; tile number = 0
-  STA $0202                     ; color pallete = 0, no flipping
+  ; LDA #$00
+  ; STA $0201                     ; tile number = 0
+  ; STA $0202                     ; color pallete = 0, no flipping
 
   ;; LDA #$88
   ;; STA $0204                     ; put sprite in center ($80) of screen vertically
