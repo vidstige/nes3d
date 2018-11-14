@@ -113,23 +113,79 @@ LoadPalettesLoop:
   STA $2000
 
   ;; Place sprites
-  place 0, #$60, #$40
-  place 1, #$68, #$40
-  place 2, #$70, #$40
-  place 3, #$78, #$40
-  place 4, #$80, #$40
-  place 5, #$88, #$40
-  place 6, #$90, #$40
-  place 7, #$98, #$40
+  place $00, #$60, #$60
+  place $01, #$68, #$60
+  place $02, #$70, #$60
+  place $03, #$78, #$60
+  place $04, #$80, #$60
+  place $05, #$88, #$60
+  place $06, #$90, #$60
+  place $07, #$98, #$60
   
-  sprite 0, #0
-  sprite 1, #0
-  sprite 2, #0
-  sprite 3, #0
-  sprite 4, #0
-  sprite 5, #0
-  sprite 6, #0
-  sprite 7, #0
+  place $08, #$60, #$70
+  place $09, #$68, #$70
+  place $0A, #$70, #$70
+  place $0B, #$78, #$70
+  place $0C, #$80, #$70
+  place $0D, #$88, #$70
+  place $0E, #$90, #$70
+  place $0F, #$98, #$70
+  
+  place $10, #$60, #$80
+  place $11, #$68, #$80
+  place $12, #$70, #$80
+  place $13, #$78, #$80
+  place $14, #$80, #$80
+  place $15, #$88, #$80
+  place $16, #$90, #$80
+  place $17, #$98, #$80
+  
+  place $18, #$60, #$90
+  place $19, #$68, #$90
+  place $1A, #$70, #$90
+  place $1B, #$78, #$90
+  place $1C, #$80, #$90
+  place $1D, #$88, #$90
+  place $1E, #$90, #$90
+  place $1F, #$98, #$90
+
+  ;; assign sprites
+  sprite $00, #$00
+  sprite $01, #$00
+  sprite $02, #$00
+  sprite $03, #$00
+  sprite $04, #$00
+  sprite $05, #$00
+  sprite $06, #$00
+  sprite $07, #$00
+
+  sprite $08, #$00
+  sprite $09, #$00
+  sprite $0A, #$00
+  sprite $0B, #$00
+  sprite $0C, #$00
+  sprite $0D, #$00
+  sprite $0E, #$00
+  sprite $0F, #$00
+
+  sprite $10, #$00
+  sprite $11, #$00
+  sprite $12, #$00
+  sprite $13, #$00
+  sprite $14, #$00
+  sprite $15, #$00
+  sprite $16, #$00
+  sprite $17, #$00
+
+  sprite $18, #$00
+  sprite $19, #$00
+  sprite $1A, #$00
+  sprite $1B, #$00
+  sprite $1C, #$00
+  sprite $1D, #$00
+  sprite $1E, #$00
+  sprite $1F, #$00
+
 
   ; LDA #$80
   ; STA $0200                     ; put sprite 0 in center ($80) of screen vertically
