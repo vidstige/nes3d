@@ -133,10 +133,15 @@ def render(img: np.array, model: Model, projection: np.array):
     directional = np.array([255, 0, 255, 255]), np.array([0, 0, -1])
 
     target = RenderTarget(img)
-    for face, normal in zip(model.faces, model.face_normals):
-        directional_color, direction = directional
-        color = np.clip(ambient + max(np.dot(normal, direction), 0) * directional_color, 0, 255)
-        target.triangle(screen[face], color)
+    forward = np.array([0, 0, -1])
+    for face, raw_normal in zip(model.faces, model.face_normals):
+        normal = np.dot(normal_transform, np.append(raw_normal, 1))
+        normal = np.array(normal).flatten()[:-1]
+        # cull faces
+        if np.dot(normal, forward) > 0:
+            directional_color, direction = directional
+            color = np.clip(ambient + max(np.dot(normal, direction), 0) * directional_color, 0, 255)
+            target.triangle(screen[face], color)
 
     #for s in screen:
     #    x, y, z, w = s[0,0], s[0,1], s[0,2], s[0,3]
