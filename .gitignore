@@ -1,2 +1,5 @@
 *.nes
 *.fns
+
+# Mac debris
+.DS_Store
