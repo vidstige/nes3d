@@ -151,40 +151,40 @@ LoadPalettesLoop:
 
   ;; assign sprites
   sprite $00, #$00
-  sprite $01, #$00
-  sprite $02, #$00
-  sprite $03, #$00
-  sprite $04, #$00
-  sprite $05, #$00
-  sprite $06, #$00
-  sprite $07, #$00
+  sprite $01, #$01
+  sprite $02, #$02
+  sprite $03, #$03
+  sprite $04, #$04
+  sprite $05, #$05
+  sprite $06, #$06
+  sprite $07, #$07
 
-  sprite $08, #$00
-  sprite $09, #$00
-  sprite $0A, #$00
-  sprite $0B, #$00
-  sprite $0C, #$00
-  sprite $0D, #$00
-  sprite $0E, #$00
-  sprite $0F, #$00
+  sprite $08, #$08
+  sprite $09, #$09
+  sprite $0A, #$0A
+  sprite $0B, #$0B
+  sprite $0C, #$0C
+  sprite $0D, #$0D
+  sprite $0E, #$0E
+  sprite $0F, #$0F
 
-  sprite $10, #$00
-  sprite $11, #$00
-  sprite $12, #$00
-  sprite $13, #$00
-  sprite $14, #$00
-  sprite $15, #$00
-  sprite $16, #$00
-  sprite $17, #$00
+  sprite $10, #$10
+  sprite $11, #$11
+  sprite $12, #$12
+  sprite $13, #$13
+  sprite $14, #$14
+  sprite $15, #$15
+  sprite $16, #$16
+  sprite $17, #$17
 
-  sprite $18, #$00
-  sprite $19, #$00
-  sprite $1A, #$00
-  sprite $1B, #$00
-  sprite $1C, #$00
-  sprite $1D, #$00
-  sprite $1E, #$00
-  sprite $1F, #$00
+  sprite $18, #$18
+  sprite $19, #$19
+  sprite $1A, #$1A
+  sprite $1B, #$1B
+  sprite $1C, #$1C
+  sprite $1D, #$1D
+  sprite $1E, #$1E
+  sprite $1F, #$1F
 
 
   ; LDA #$80
@@ -260,4 +260,5 @@ PaletteData:
 
   .bank 2                       ; Change to bank 2
   .org $0000                    ; start at $0000
-  .incbin "mario.chr"           ; INClude BINary. 8KB graphics file from SMB1
+  ;;.incbin "mario.chr"           ; INClude BINary. 8KB graphics file from SMB1
+  .incbin "gen/image.chr"

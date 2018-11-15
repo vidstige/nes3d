@@ -25,8 +25,11 @@ def main():
     # downsample to 2-bits
     im2bit = image.downsample(image.intensity(im), bits=2)
 
+    large = (8, 16)
+    sprite_sheet = np.vstack(image.tile(im2bit, shape=large))
+
     # re-arrange
-    with open('image.chr', 'w') as f:
-        npchr.write(f, im2bit)
+    with open('image.chr', 'wb') as f:
+        npchr.write(f, sprite_sheet)
 
 main()
