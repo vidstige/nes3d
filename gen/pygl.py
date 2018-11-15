@@ -93,12 +93,11 @@ class RenderTarget(object):
         self.img = img
 
     def pixel(self, x, y, color):
-        width, height, _ = self.img.shape
         self.img[int(x), int(y)] = color
 
     def triangle(self, t, color):
         p0, p1, p2 = [np.array(x).ravel().astype(int) for x in t]
-        width, height, _ = self.img.shape
+        width, height = self.img.shape[1], self.img.shape[0]
         # First calculate a bounding box for this triangle so we don't have to iterate over the entire image
         # Clamped to the bounds of the image
         xmin = max(min(p0[0], p1[0], p2[0]), 0)
@@ -111,11 +110,11 @@ class RenderTarget(object):
         for x in range(xmin, xmax):
             for y in range(ymin, ymax):
                 if contains_point(p0, p1, p2, (x, y, 1, 1)):
-                    self.img[x, y] = color
+                    self.img[y, x] = color
 
 
-def get_screen(ndc: np.array, shape: Tuple[int, int]) -> np.array:
-    width, height, _ = shape
+def get_screen(ndc: np.array, shape: Tuple) -> np.array:
+    width, height = shape[1], shape[0]
     center = np.array([width/2, height/2, 0, 0])
     scale = np.array([width/2, height/2, 1, 1])
     return center + np.multiply(ndc, scale)
