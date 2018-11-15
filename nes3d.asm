@@ -32,6 +32,7 @@
   ;; sprite 0 44
   .macro sprite
     LDA \2
+    ASL A
     STA $0201 + 4 * \1
   .endm
 
@@ -113,78 +114,78 @@ LoadPalettesLoop:
   STA $2000
 
   ;; Place sprites
-  place $00, #$60, #$60
-  place $01, #$68, #$60
-  place $02, #$70, #$60
-  place $03, #$78, #$60
-  place $04, #$80, #$60
-  place $05, #$88, #$60
-  place $06, #$90, #$60
-  place $07, #$98, #$60
+  place #$00, #$60, #$60
+  place #$01, #$68, #$60
+  place #$02, #$70, #$60
+  place #$03, #$78, #$60
+  place #$04, #$80, #$60
+  place #$05, #$88, #$60
+  place #$06, #$90, #$60
+  place #$07, #$98, #$60
   
-  place $08, #$60, #$70
-  place $09, #$68, #$70
-  place $0A, #$70, #$70
-  place $0B, #$78, #$70
-  place $0C, #$80, #$70
-  place $0D, #$88, #$70
-  place $0E, #$90, #$70
-  place $0F, #$98, #$70
+  place #$08, #$60, #$70
+  place #$09, #$68, #$70
+  place #$0A, #$70, #$70
+  place #$0B, #$78, #$70
+  place #$0C, #$80, #$70
+  place #$0D, #$88, #$70
+  place #$0E, #$90, #$70
+  place #$0F, #$98, #$70
   
-  place $10, #$60, #$80
-  place $11, #$68, #$80
-  place $12, #$70, #$80
-  place $13, #$78, #$80
-  place $14, #$80, #$80
-  place $15, #$88, #$80
-  place $16, #$90, #$80
-  place $17, #$98, #$80
+  place #$10, #$60, #$80
+  place #$11, #$68, #$80
+  place #$12, #$70, #$80
+  place #$13, #$78, #$80
+  place #$14, #$80, #$80
+  place #$15, #$88, #$80
+  place #$16, #$90, #$80
+  place #$17, #$98, #$80
   
-  place $18, #$60, #$90
-  place $19, #$68, #$90
-  place $1A, #$70, #$90
-  place $1B, #$78, #$90
-  place $1C, #$80, #$90
-  place $1D, #$88, #$90
-  place $1E, #$90, #$90
-  place $1F, #$98, #$90
+  place #$18, #$60, #$90
+  place #$19, #$68, #$90
+  place #$1A, #$70, #$90
+  place #$1B, #$78, #$90
+  place #$1C, #$80, #$90
+  place #$1D, #$88, #$90
+  place #$1E, #$90, #$90
+  place #$1F, #$98, #$90
 
   ;; assign sprites
-  sprite $00, #$00
-  sprite $01, #$01
-  sprite $02, #$02
-  sprite $03, #$03
-  sprite $04, #$04
-  sprite $05, #$05
-  sprite $06, #$06
-  sprite $07, #$07
+  sprite #$00, #$00
+  sprite #$01, #$01
+  sprite #$02, #$02
+  sprite #$03, #$03
+  sprite #$04, #$04
+  sprite #$05, #$05
+  sprite #$06, #$06
+  sprite #$07, #$07
 
-  sprite $08, #$08
-  sprite $09, #$09
-  sprite $0A, #$0A
-  sprite $0B, #$0B
-  sprite $0C, #$0C
-  sprite $0D, #$0D
-  sprite $0E, #$0E
-  sprite $0F, #$0F
+  sprite #$08, #$08
+  sprite #$09, #$09
+  sprite #$0A, #$0A
+  sprite #$0B, #$0B
+  sprite #$0C, #$0C
+  sprite #$0D, #$0D
+  sprite #$0E, #$0E
+  sprite #$0F, #$0F
 
-  sprite $10, #$10
-  sprite $11, #$11
-  sprite $12, #$12
-  sprite $13, #$13
-  sprite $14, #$14
-  sprite $15, #$15
-  sprite $16, #$16
-  sprite $17, #$17
+  sprite #$10, #$10
+  sprite #$11, #$11
+  sprite #$12, #$12
+  sprite #$13, #$13
+  sprite #$14, #$14
+  sprite #$15, #$15
+  sprite #$16, #$16
+  sprite #$17, #$17
 
-  sprite $18, #$18
-  sprite $19, #$19
-  sprite $1A, #$1A
-  sprite $1B, #$1B
-  sprite $1C, #$1C
-  sprite $1D, #$1D
-  sprite $1E, #$1E
-  sprite $1F, #$1F
+  sprite #$18, #$18
+  sprite #$19, #$19
+  sprite #$1A, #$1A
+  sprite #$1B, #$1B
+  sprite #$1C, #$1C
+  sprite #$1D, #$1D
+  sprite #$1E, #$1E
+  sprite #$1F, #$1F
 
 
   ; LDA #$80
