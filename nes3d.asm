@@ -183,24 +183,19 @@ LoadPalettesLoop:
   ;ADC LookupPointer+1
   ;STA LookupPointer+1
 
-  LDX #$00  ; tile number
-  LDY #$00  ; sprite number address
+  LDX #$00  ; sprite number address offset
+  LDY #$00  ; tile number
   CLC
 SpriteLoop:
-  ; TODO: Load byte at Lookup + Frame * 64 + Y into A here
-  ;TXA
-  ;ASL A
-  LDA Lookup, X
-  ;ASL A
-  
-  STA $0201, Y
+  LDA Lookup, Y 
+  STA $0201, x
 
-  TYA
+  TXA
   ADC #$04
-  TAY
+  TAX
 
-  INX
-  CPX #$20                      ; Compare X to $20 (decimal 32)
+  INY
+  CPY #$20                      ; Compare X to $20 (decimal 32)
   BNE SpriteLoop          ; (when (not= x 32) (recur))
 
 
