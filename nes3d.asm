@@ -151,41 +151,20 @@ LoadPalettesLoop:
   place #$1F, #$98, #$90
 
   ;; assign sprites
-  sprite #$00, #$00
-  sprite #$01, #$01
-  sprite #$02, #$02
-  sprite #$03, #$03
-  sprite #$04, #$04
-  sprite #$05, #$05
-  sprite #$06, #$06
-  sprite #$07, #$07
+  LDX #$00  ; sprite numbers
+  LDY #$00  ; tile number
+SpriteLoop:
+  TYA
+  ASL A
+  STA $0201, X
 
-  sprite #$08, #$08
-  sprite #$09, #$09
-  sprite #$0A, #$0A
-  sprite #$0B, #$0B
-  sprite #$0C, #$0C
-  sprite #$0D, #$0D
-  sprite #$0E, #$0E
-  sprite #$0F, #$0F
+  TXA
+  ADC #$04
+  TAX
 
-  sprite #$10, #$10
-  sprite #$11, #$11
-  sprite #$12, #$12
-  sprite #$13, #$13
-  sprite #$14, #$14
-  sprite #$15, #$15
-  sprite #$16, #$16
-  sprite #$17, #$17
-
-  sprite #$18, #$18
-  sprite #$19, #$19
-  sprite #$1A, #$1A
-  sprite #$1B, #$1B
-  sprite #$1C, #$1C
-  sprite #$1D, #$1D
-  sprite #$1E, #$1E
-  sprite #$1F, #$1F
+  INY
+  CPY #$20                      ; Compare X to $20 (decimal 32)
+  BNE SpriteLoop          ; (when (not= x 32) (recur))
 
 
   ; LDA #$80
@@ -194,15 +173,6 @@ LoadPalettesLoop:
   ; LDA #$00
   ; STA $0201                     ; tile number = 0
   ; STA $0202                     ; color pallete = 0, no flipping
-
-  ;; LDA #$88
-  ;; STA $0204                     ; put sprite in center ($80) of screen vertically
-  ;; STA $0207                     ; put sprite in center ($80) of screen horizontally
-  ;; LDA #$01
-  ;; STA $0205                     ; tile number = 0
-  ;; LDA #$00
-  ;; STA $0206                     ; color pallete = 0, no flipping
-
 
     ;; Set up the PPU
   ;; PPUMASK ($2001)
@@ -246,6 +216,7 @@ PaletteData:
   .db $0F,$31,$32,$33,$0F,$35,$36,$37,$0F,$39,$3A,$3B,$0F,$3D,$3E,$0F  ;background palette data
   .db $0F,$1C,$15,$14,$0F,$02,$38,$3C,$0F,$1C,$15,$14,$0F,$02,$38,$3C  ;sprite palette data
 
+;; Frame lookups
 Lookup:
   .incbin "gen/lookup.bin"
 
@@ -264,5 +235,4 @@ Lookup:
 
   .bank 2                       ; Change to bank 2
   .org $0000                    ; start at $0000
-  ;;.incbin "mario.chr"           ; INClude BINary. 8KB graphics file from SMB1
   .incbin "gen/image.chr"
