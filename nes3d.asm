@@ -175,19 +175,19 @@ LoadPalettesLoop:
   ;ROL LookupPointer+1
 
   ; Add address of Lookup
-  ;CLC
-  ;LDA LOW(Lookup)
+  CLC
+  LDA LOW(Lookup)
   ;ADC LookupPointer
-  ;STA LookupPointer
-  ;LDA HIGH(Lookup)
+  STA LookupPointer
+  LDA HIGH(Lookup)
   ;ADC LookupPointer+1
-  ;STA LookupPointer+1
+  STA LookupPointer+1
 
   LDX #$00  ; sprite number address offset
   LDY #$00  ; tile number
   CLC
 SpriteLoop:
-  LDA Lookup, Y 
+  LDA (LookupPointer), Y 
   STA $0201, x
 
   TXA
@@ -245,11 +245,11 @@ NMI:
   .org $E000                    ; start at $E000
 
 ;; Frame lookups
-;Frame:
-;  .rs 1  ; current frame, e.g. 0
+Frame:
+  .rs 1  ; current frame, e.g. 0
 
-;LookupPointer:
-;  .rs 2  ; points to adress in lookup. 
+LookupPointer:
+  .rs 2  ; points to adress in lookup. 
 
 Lookup:
   .incbin "gen/lookup.bin"
