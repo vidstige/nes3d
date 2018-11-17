@@ -5,6 +5,14 @@ import png
 import image
 import npchr
 
+# lookup 16 bytes
+# 11 bits needed for tile index (32k memory, each tile is 16 bytes)
+# 2 bits needed flr flip status
+def layout(sprite_sheets):
+    lookup = bytes()
+    return sprite_sheets[0], lookup
+
+
 def main():
     eye = np.array([0, 0, -1])
     target = np.array([0, 0, 0])
@@ -26,10 +34,17 @@ def main():
     im2bit = image.downsample(image.intensity(im), bits=2)
 
     large = (8, 16)
-    sprite_sheet = np.vstack(image.tile(im2bit, shape=large))
+    sprite_sheet0 = np.vstack(image.tile(im2bit, shape=large))
+
+    sprite_sheets = [sprite_sheet0]
+    sprite_sheet, lookup = layout(sprite_sheets)
 
     # re-arrange
     with open('image.chr', 'wb') as f:
         npchr.write(f, sprite_sheet)
+
+    # write lookups
+    with open('lookup.bin', 'wb') as f:
+        f.write(lookup)
 
 main()
