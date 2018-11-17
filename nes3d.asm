@@ -151,19 +151,56 @@ LoadPalettesLoop:
   place #$1F, #$98, #$90
 
   ;; assign sprites
-  LDX #$00  ; sprite numbers
-  LDY #$00  ; tile number
+  ;LDA #$00  ; select first frame
+  ;STA Frame
+
+  ;; Compute LookupPointer
+  ; Load frame number
+  ;LDA Frame
+  ;STA LookupPointer
+  ;LDA #$00
+  ;STA LookupPointer+1
+  ; Multiply with 64
+  ;ASL LookupPointer
+  ;ROL LookupPointer+1
+  ;ASL LookupPointer
+  ;ROL LookupPointer+1
+  ;ASL LookupPointer
+  ;ROL LookupPointer+1
+  ;ASL LookupPointer
+  ;ROL LookupPointer+1
+  ;ASL LookupPointer
+  ;ROL LookupPointer+1
+  ;ASL LookupPointer
+  ;ROL LookupPointer+1
+
+  ; Add address of Lookup
+  ;CLC
+  ;LDA LOW(Lookup)
+  ;ADC LookupPointer
+  ;STA LookupPointer
+  ;LDA HIGH(Lookup)
+  ;ADC LookupPointer+1
+  ;STA LookupPointer+1
+
+  LDX #$00  ; tile number
+  LDY #$00  ; sprite number address
+  CLC
 SpriteLoop:
+  ; TODO: Load byte at Lookup + Frame * 64 + Y into A here
+  ;TXA
+  ;ASL A
+  LDA Lookup, X
+  ;ASL A
+  
+  STA $0201, Y
+
   TYA
-  ASL A
-  STA $0201, X
-
-  TXA
   ADC #$04
-  TAX
+  TAY
 
-  INY
-  CPY #$20                      ; Compare X to $20 (decimal 32)
+  INX
+  CPX #$20                      ; Compare X to $20 (decimal 32)
   BNE SpriteLoop          ; (when (not= x 32) (recur))
 
 
@@ -212,13 +249,20 @@ NMI:
   .bank 1                       ; change to bank 1
   .org $E000                    ; start at $E000
 
+;; Frame lookups
+;Frame:
+;  .rs 1  ; current frame, e.g. 0
+
+;LookupPointer:
+;  .rs 2  ; points to adress in lookup. 
+
+Lookup:
+  .incbin "gen/lookup.bin"
+
+;; Palette
 PaletteData:
   .db $0F,$31,$32,$33,$0F,$35,$36,$37,$0F,$39,$3A,$3B,$0F,$3D,$3E,$0F  ;background palette data
   .db $0F,$1C,$15,$14,$0F,$02,$38,$3C,$0F,$1C,$15,$14,$0F,$02,$38,$3C  ;sprite palette data
-
-;; Frame lookups
-Lookup:
-  .incbin "gen/lookup.bin"
 
   ;; There are 3 times when the NES processor will interrupt your code and jump to a new location. These vectors, held in PRG ROM tell the processor
   ;; where to go when that happens.

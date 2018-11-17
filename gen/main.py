@@ -5,12 +5,23 @@ import png
 import image
 import npchr
 
-# lookup 16 bytes
-# 11 bits needed for tile index (32k memory, each tile is 16 bytes)
-# 2 bits needed flr flip status
+
 def layout(sprite_sheets):
-    lookup = bytes()
+    lookup = list(range(32))
     return sprite_sheets[0], lookup
+
+
+# Lookup format
+# 64 bytes each
+# * 32 bytes of tile indices (note - low bit is low/high page)
+# * 32 Bytes of attreibutes, containg palette and vertical/horizontal flips
+def pack_lookup(lookup) -> bytes:
+    packed = bytearray()
+    for tile_index in lookup:
+        packed.append(tile_index << 1)
+    for _ in range(32):
+        packed.append(0)  # no flip
+    return bytes(packed)
 
 
 def main():
@@ -45,6 +56,6 @@ def main():
 
     # write lookups
     with open('lookup.bin', 'wb') as f:
-        f.write(lookup)
+        f.write(pack_lookup(lookup))
 
 main()
