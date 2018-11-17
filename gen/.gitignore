@@ -4,3 +4,8 @@ __pycache__/
 
 /images/
 /out.gif
+/image.png
+
+# game data
+/lookup.bin
+/image.chr
