@@ -151,31 +151,6 @@ LoadPalettesLoop:
   place #$1F, #$98, #$90
 
   ;; assign sprites
-  ;LDA #$00  ; select first frame
-  ;STA Frame
-
-  ;; Compute LookupPointer
-  ; Load frame number
-  ;LDA Frame
-  ;STA LookupPointer
-  ;LDA #$00
-  ;STA LookupPointer+1
-  ; Multiply with 64
-  ;ASL LookupPointer
-  ;ROL LookupPointer+1
-  ;ASL LookupPointer
-  ;ROL LookupPointer+1
-  ;ASL LookupPointer
-  ;ROL LookupPointer+1
-  ;ASL LookupPointer
-  ;ROL LookupPointer+1
-  ;ASL LookupPointer
-  ;ROL LookupPointer+1
-  ;ASL LookupPointer
-  ;ROL LookupPointer+1
-
-  ; Add address of Lookup
-  CLC
   LDA LOW(Lookup)
   ;ADC LookupPointer
   STA LookupPointer
