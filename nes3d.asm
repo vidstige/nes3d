@@ -23,9 +23,6 @@
     STA $0200 + 4 * \1
     LDA \2
     STA $0203 + 4 * \1
-
-    LDA #$00
-    STA $0202 + 4 * \1  ; color palette = 0, no flipping
   .endm
 
   ;; set sprite number to tile number
@@ -152,25 +149,27 @@ LoadPalettesLoop:
 
   ;; assign sprites
   LDA LOW(Lookup)
-  ;ADC LookupPointer
   STA LookupPointer
   LDA HIGH(Lookup)
-  ;ADC LookupPointer+1
   STA LookupPointer+1
 
   LDX #$00  ; sprite number address offset
   LDY #$00  ; tile number
   CLC
 SpriteLoop:
-  LDA (LookupPointer), Y 
-  STA $0201, x
+  LDA (LookupPointer), Y
+  STA $0201, X
+
+  INY
+  LDA (LookupPointer), Y
+  STA $0202, X
 
   TXA
   ADC #$04
   TAX
 
   INY
-  CPY #$20                      ; Compare X to $20 (decimal 32)
+  CPY #$40                      ; Compare X to $20 (decimal 32)
   BNE SpriteLoop          ; (when (not= x 32) (recur))
 
 
@@ -196,7 +195,7 @@ SpriteLoop:
   ;; ||+------ Intensify reds (and darken other colors)
   ;; |+------- Intensify greens (and darken other colors)
   ;; +-------- Intensify blues (and darken other colors)
-  LDA #%10010000                ; enable sprites, intensify blues
+  LDA #%00010000                ; enable sprites, intensify blues
   STA $2001
 
 Forever:
@@ -220,9 +219,6 @@ NMI:
   .org $E000                    ; start at $E000
 
 ;; Frame lookups
-Frame:
-  .rs 1  ; current frame, e.g. 0
-
 LookupPointer:
   .rs 2  ; points to adress in lookup. 
 

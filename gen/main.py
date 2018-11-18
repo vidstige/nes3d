@@ -26,9 +26,33 @@ def make_lookup(n: int) -> List[Lookup]:
 def replace_duplicates(sprites: List[Sprite], lookup: List[Lookup]):
     """Searches through tiles and replaces duplicates."""
     for i in lookup:
-        for j, sprite in enumerate(sprites):
-            if (sprites[i.index] == sprite).all():
+        sprite = sprites[i.index]
+        for j, other in enumerate(sprites):
+            # exact match
+            if (sprite == other).all():
                 i.index = j
+                i.horizontal = False
+                i.vertical = False
+                break
+            # upside down
+            if (np.flip(sprite, 1) == other).all():
+                print('upside down')
+                i.index = j
+                i.horizontal = False
+                i.vertical = True
+                break
+            # left-right
+            if (np.flip(sprite, 0) == other).all():
+                print('left right')
+                i.index = j
+                i.horizontal = True
+                i.vertical = False
+                break
+            if (np.flip(np.flip(sprite, 0), 1) == other).all():
+                print("both")
+                i.index = j
+                i.horizontal = True
+                i.vertical = True
                 break
 
 
@@ -51,12 +75,11 @@ def repack(sprites: List[Sprite], lookup: List[Lookup]):
 # * 32 bytes of tile indices (note - low bit is low/high page)
 # * 32 Bytes of attreibutes, containg palette and vertical/horizontal flips
 def pack_lookup(lookup: List[Lookup]) -> bytes:
-    indices = bytearray()
-    attributes = bytearray()
+    result = bytearray()
     for l in lookup:
-        indices.append(l.index << 1)
-        attributes.append(l.horizontal << 7 | l.vertical << 6)  # no flip
-    return bytes(indices + attributes)
+        result.append(l.index << 1)
+        result.append(l.horizontal << 7 | l.vertical << 6)
+    return bytes(result)
 
 
 def main():
