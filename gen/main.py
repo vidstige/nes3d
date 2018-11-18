@@ -25,10 +25,11 @@ def make_lookup(n: int) -> List[Lookup]:
 
 def replace_duplicates(sprites: List[Sprite], lookup: List[Lookup]):
     """Searches through tiles and replaces duplicates."""
-    for lookup_index, i in enumerate(lookup):
-        for j in lookup[lookup_index+1:]:
-            if (sprites[i.index] == sprites[j.index]).all():
-                j.index = i.index
+    for i in lookup:
+        for j, sprite in enumerate(sprites):
+            if (sprites[i.index] == sprite).all():
+                i.index = j
+                break
 
 
 def repack(sprites: List[Sprite], lookup: List[Lookup]):
@@ -84,9 +85,7 @@ def main():
     lookup = make_lookup(len(tiles))
 
     replace_duplicates(tiles, lookup)
-    print(len(tiles))
     repack(tiles, lookup)
-    print(len(tiles))
 
     sprite_sheet = np.vstack(tiles)
 
