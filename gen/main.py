@@ -1,3 +1,5 @@
+from typing import List
+
 import numpy as np
 from pygl import render, Model
 import numgl
@@ -6,18 +8,26 @@ import image
 import npchr
 
 
-def layout(sprite_sheets):
-    lookup = list(range(32))
-    return sprite_sheets[0], lookup
+Sprite = np.array
+
+class Lookup(object):
+    def __init__(self, n):
+        self.indices = range(n)
+        self.horizontal = [False] * n
+        self.vertical = [False] * n
+
+
+def optimize(sprites: List[Sprite], lookup: Lookup):
+    return sprites, lookup
 
 
 # Lookup format
 # 64 bytes each
 # * 32 bytes of tile indices (note - low bit is low/high page)
 # * 32 Bytes of attreibutes, containg palette and vertical/horizontal flips
-def pack_lookup(lookup) -> bytes:
+def pack_lookup(lookup: Lookup) -> bytes:
     packed = bytearray()
-    for tile_index in lookup:
+    for tile_index in lookup.indices:
         packed.append(tile_index << 1)
     for _ in range(32):
         packed.append(0)  # no flip
@@ -45,10 +55,11 @@ def main():
     im2bit = image.downsample(image.intensity(im), bits=2)
 
     large = (8, 16)
-    sprite_sheet0 = np.vstack(image.tile(im2bit, shape=large))
+    tiles = image.tile(im2bit, shape=large)
 
-    sprite_sheets = [sprite_sheet0]
-    sprite_sheet, lookup = layout(sprite_sheets)
+    lookup = Lookup(32)
+    optimized_tiles, optimized_lookup = optimize(tiles, lookup)
+    sprite_sheet = np.vstack(optimized_tiles)
 
     # re-arrange
     with open('image.chr', 'wb') as f:
@@ -56,6 +67,6 @@ def main():
 
     # write lookups
     with open('lookup.bin', 'wb') as f:
-        f.write(pack_lookup(lookup))
+        f.write(pack_lookup(optimized_lookup))
 
 main()
