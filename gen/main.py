@@ -19,8 +19,8 @@ class Lookup(object):
         return 'Lookup({}, {}, {})'.format(self.index, self.horizontal, self.vertical)
 
 
-def make_lookup(n: int) -> List[Lookup]:
-    return [Lookup(i) for i in range(n)]
+def make_lookup(start: int, n: int) -> List[Lookup]:
+    return [Lookup(i) for i in range(start, start + n)]
 
 
 def replace_duplicates(sprites: List[Sprite], lookup: List[Lookup]):
@@ -36,20 +36,17 @@ def replace_duplicates(sprites: List[Sprite], lookup: List[Lookup]):
                 break
             # upside down
             if (np.flip(sprite, 1) == other).all():
-                print('upside down')
                 i.index = j
                 i.horizontal = False
                 i.vertical = True
                 break
             # left-right
             if (np.flip(sprite, 0) == other).all():
-                print('left right')
                 i.index = j
                 i.horizontal = True
                 i.vertical = False
                 break
             if (np.flip(np.flip(sprite, 0), 1) == other).all():
-                print("both")
                 i.index = j
                 i.horizontal = True
                 i.vertical = True
@@ -83,29 +80,36 @@ def pack_lookup(lookup: List[Lookup]) -> bytes:
 
 
 def main():
-    eye = np.array([0, 0, -1])
     target = np.array([0, 0, 0])
     up = np.array([0, 1, 0])
-    projection = numgl.lookat(eye, target, up)
 
     cube = Model.load_obj('icosaedron.obj')
     cube.compute_face_normals()
 
     w = 64
     h = 64
-    im = np.zeros((h, w, 4))
-    render(im, cube, projection)
 
-    with open('image.png', 'wb') as f:
-        f.write(png.write(image.quantize(im, bits=8).tobytes(), w, h))
+    n = 12
+    tiles = []
+    lookup = []
+    for i in range(n):
+        im = np.zeros((h, w, 4))
+        a = 2*np.pi * i / n
+        eye = np.array([np.sin(a), 0, np.cos(a)])
+        projection = numgl.lookat(eye, target, up)
+        render(im, cube, projection)
 
-    # downsample to 2-bits
-    im2bit = image.quantize(image.intensity(im), bits=2)
+        with open('image-{:02}.png'.format(i), 'wb') as f:
+            f.write(png.write(image.quantize(im, bits=8).tobytes(), w, h))
 
-    large = (8, 16)
-    tiles = list(image.tile(im2bit, shape=large))
+        # downsample to 2-bits
+        im2bit = image.quantize(image.intensity(im), bits=2)
 
-    lookup = make_lookup(len(tiles))
+        large = (8, 16)
+
+        tiles.extend(image.tile(im2bit, shape=large))
+
+        lookup.extend(make_lookup(len(lookup), 32))
 
     replace_duplicates(tiles, lookup)
     repack(tiles, lookup)
