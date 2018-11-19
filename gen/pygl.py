@@ -128,8 +128,8 @@ def render(img: np.array, model: Model, projection: np.array):
     # divide and scale into screen space
     screen = get_screen(camera_vertices, img.shape)
 
-    ambient = np.array([0, 0, 0, 255])
-    directional = np.array([255, 255, 255, 255]), np.array([0, 0, -1])
+    ambient = np.array([0, 0, 0, 1])
+    directional = np.array([1, 1, 1, 1]), np.array([0, 0, -1])
 
     target = RenderTarget(img)
     forward = np.array([0, 0, -1])
@@ -139,7 +139,7 @@ def render(img: np.array, model: Model, projection: np.array):
         # cull faces
         if np.dot(normal, forward) > 0:
             directional_color, direction = directional
-            color = np.clip(ambient + max(np.dot(normal, direction), 0) * directional_color, 0, 255)
+            color = np.clip(ambient + max(np.dot(normal, direction), 0) * directional_color, 0, 1)
             target.triangle(screen[face], color)
 
     #for s in screen:

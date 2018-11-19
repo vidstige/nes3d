@@ -93,14 +93,14 @@ def main():
 
     w = 64
     h = 64
-    im = np.zeros((h, w, 4), 'uint8')
+    im = np.zeros((h, w, 4))
     render(im, cube, projection)
 
     with open('image.png', 'wb') as f:
-        f.write(png.write(im.tobytes(), w, h))
+        f.write(png.write(image.quantize(im, bits=8).tobytes(), w, h))
 
     # downsample to 2-bits
-    im2bit = image.downsample(image.intensity(im), bits=2)
+    im2bit = image.quantize(image.intensity(im), bits=2)
 
     large = (8, 16)
     tiles = list(image.tile(im2bit, shape=large))
