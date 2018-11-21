@@ -148,20 +148,20 @@ LoadPalettesLoop:
   place #$1F, #$98, #$90
 
   ;; assign sprites
-  LDA LOW(Lookup)
+  LDA #LOW(Lookup)
   STA LookupPointer
-  LDA HIGH(Lookup)
+  LDA #HIGH(Lookup)
   STA LookupPointer+1
 
   LDX #$00  ; sprite number address offset
   LDY #$00  ; tile number
   CLC
 SpriteLoop:
-  LDA (LookupPointer), Y
+  LDA [LookupPointer], Y
   STA $0201, X
 
   INY
-  LDA (LookupPointer), Y
+  LDA [LookupPointer], Y
   STA $0202, X
 
   TXA
@@ -218,10 +218,6 @@ NMI:
   .bank 1                       ; change to bank 1
   .org $E000                    ; start at $E000
 
-;; Frame lookups
-LookupPointer:
-  .rs 2  ; points to adress in lookup. 
-
 Lookup:
   .incbin "gen/lookup.bin"
 
@@ -246,3 +242,7 @@ PaletteData:
   .bank 2                       ; Change to bank 2
   .org $0000                    ; start at $0000
   .incbin "gen/image.chr"
+
+  .zp
+LookupPointer:
+  .rs 2  ; points to adress in lookup. 
