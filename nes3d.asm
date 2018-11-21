@@ -147,32 +147,6 @@ LoadPalettesLoop:
   place #$1E, #$90, #$90
   place #$1F, #$98, #$90
 
-  ;; assign sprites
-  LDA #LOW(Lookup)
-  STA LookupPointer
-  LDA #HIGH(Lookup)
-  STA LookupPointer+1
-
-  LDX #$00  ; sprite number address offset
-  LDY #$00  ; tile number
-  CLC
-SpriteLoop:
-  LDA [LookupPointer], Y
-  STA $0201, X
-
-  INY
-  LDA [LookupPointer], Y
-  STA $0202, X
-
-  TXA
-  ADC #$04
-  TAX
-
-  INY
-  CPY #$40                      ; Compare X to $20 (decimal 32)
-  BNE SpriteLoop          ; (when (not= x 32) (recur))
-
-
   ; LDA #$80
   ; STA $0200                     ; put sprite 0 in center ($80) of screen vertically
   ; STA $0203                     ; put sprite 0 in center ($80) of screen horizontally
@@ -199,6 +173,36 @@ SpriteLoop:
   STA $2001
 
 Forever:
+
+
+  ;; assign sprites
+  CLC
+  LDA #LOW(Lookup)
+  STA LookupPointer
+  LDA #HIGH(Lookup)
+  STA LookupPointer+1
+
+  LDX #$00  ; sprite number address offset
+  LDY #$00  ; tile number
+  CLC
+
+SpriteLoop:
+  LDA [LookupPointer], Y
+  STA $0201, X
+
+  INY
+  LDA [LookupPointer], Y
+  STA $0202, X
+
+  TXA
+  ADC #$04
+  TAX
+
+  INY
+  CPY #$40
+  BNE SpriteLoop
+
+
   JMP Forever
 
 NMI:
