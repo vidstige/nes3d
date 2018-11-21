@@ -210,10 +210,12 @@ NMI:
   ;; The fastest and easiest way to transfer your sprites to memory is using DMA (Direct Memory Access). This just means a block of RAM is copied from CPU memory
   ;; to the PPU sprite memory. The on-board RAM space from $0200-02FF is usually used for this purpose. To start the transfer, two bytes need to be written to the PPU ports
   ;; Like all graphics updates, this needs to be done at the beginning of the VBlank period, so it will go in the NMI section of the code:
+  PHA
   LDA #$00
   STA $2003                     ; set the low byte (00) of the RAM address
   LDA #$02
   STA $4014                     ; set the high byte (02) of the RAM address, start the transfer
+  PLA
 
   RTI                           ; Return from interrupt
 
