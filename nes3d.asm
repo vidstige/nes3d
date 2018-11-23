@@ -172,16 +172,18 @@ LoadPalettesLoop:
   LDA #%00010000                ; enable sprites, intensify blues
   STA $2001
 
-Forever:
-
-
   ;; assign sprites
+Init:
+  LDA #0
+  STA Counter
+
   CLC
   LDA #LOW(Lookup)
   STA LookupPointer
   LDA #HIGH(Lookup)
   STA LookupPointer+1
 
+Forever:
   LDX #$00  ; sprite number address offset
   LDY #$00  ; tile number
   CLC
@@ -202,8 +204,33 @@ SpriteLoop:
   CPY #$40
   BNE SpriteLoop
 
+  LDY #$00
+Idle:
+  LDX #$00
+Idle2:
+  INX 
+  CPX #$ff
+  BNE Idle2
 
-  JMP Forever
+  INY
+  CPY #$ff
+  BNE Idle
+
+  CLC
+  LDA LookupPointer
+  ADC #$40
+  STA LookupPointer
+  LDA LookupPointer+1
+  ADC #$00
+  STA LookupPointer+1
+
+  INC Counter
+  LDA Counter
+  CMP #$10
+  BNE Forever
+  
+
+  JMP Init
 
 NMI:
   ;; SPRITE DMA
@@ -215,8 +242,8 @@ NMI:
   STA $2003                     ; set the low byte (00) of the RAM address
   LDA #$02
   STA $4014                     ; set the high byte (02) of the RAM address, start the transfer
+  
   PLA
-
   RTI                           ; Return from interrupt
 
 
@@ -248,6 +275,9 @@ PaletteData:
   .bank 2                       ; Change to bank 2
   .org $0000                    ; start at $0000
   .incbin "gen/image.chr"
+
+Counter:
+  .rs 1
 
   .zp
 LookupPointer:

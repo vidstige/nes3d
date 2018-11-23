@@ -89,7 +89,7 @@ def main():
     w = 64
     h = 64
 
-    n = 12
+    n = 16
     tiles = []
     lookup = []
     for i in range(n):
