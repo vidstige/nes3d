@@ -102,14 +102,12 @@ def main():
         with open('image-{:02}.png'.format(i), 'wb') as f:
             f.write(png.write(image.quantize(im, bits=8).tobytes(), w, h))
 
-        # downsample to 2-bits
-        im2bit = image.quantize(image.intensity(im), bits=2)
-
         large = (8, 16)
-
-        tiles.extend(image.tile(im2bit, shape=large))
-
+        tiles.extend(image.tile(im, shape=large))
         lookup.extend(make_lookup(len(lookup), 32))
+
+    # downsample to 2-bits
+    tiles = [image.quantize(image.intensity(t), bits=2) for t in tiles]
 
     replace_duplicates(tiles, lookup)
     repack(tiles, lookup)
