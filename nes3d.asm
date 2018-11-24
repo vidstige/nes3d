@@ -59,7 +59,7 @@ LoadPalettes:
   ;; Load the palette data
   LDX #$00
 LoadPalettesLoop:
-  LDA PaletteData, x            ; load data from address (PaletteData + value in x)
+  LDA PaletteData, X            ; load data from address (PaletteData + value in x)
   STA $2007                     ; write to PPU
   INX                           ; (inc X)
   CPX #$20                      ; Compare X to $20 (decimal 32)
@@ -256,8 +256,8 @@ Lookup:
 
 ;; Palette
 PaletteData:
-  .db $0F,$31,$32,$33,$0F,$35,$36,$37,$0F,$39,$3A,$3B,$0F,$3D,$3E,$0F  ;background palette data
-  .db $0F,$1C,$15,$14,$0F,$02,$38,$3C,$0F,$1C,$15,$14,$0F,$02,$38,$3C  ;sprite palette data
+  .db $30,$31,$32,$33,$0F,$35,$36,$37,$0F,$39,$3A,$3B,$0F,$3D,$3E,$0F  ;background palette data
+  .db $20,$14,$24,$34,$0F,$02,$38,$3C,$0F,$1C,$15,$14,$0F,$02,$38,$3C  ;sprite palette data
 
   ;; There are 3 times when the NES processor will interrupt your code and jump to a new location. These vectors, held in PRG ROM tell the processor
   ;; where to go when that happens.
