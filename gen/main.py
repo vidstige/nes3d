@@ -91,7 +91,6 @@ def main():
 
     n = 16
     tiles = []
-    lookup = []
     for i in range(n):
         im = np.zeros((h, w, 4))
         a = 2*np.pi * i / n
@@ -104,7 +103,8 @@ def main():
 
         large = (8, 16)
         tiles.extend(image.tile(im, shape=large))
-        lookup.extend(make_lookup(len(lookup), 32))
+    
+    lookup = make_lookup(0, len(tiles))
 
     # downsample to 2-bits
     tiles = [image.quantize(image.intensity(t), bits=2) for t in tiles]
