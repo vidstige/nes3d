@@ -209,7 +209,7 @@ Idle:
   LDX #$00
 Idle2:
   INX 
-  CPX #$ff
+  CPX #$70
   BNE Idle2
 
   INY

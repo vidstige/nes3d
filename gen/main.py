@@ -30,7 +30,7 @@ def diff(a: np.array, b: np.array) -> float:
 
 def replace_duplicates(sprites: List[Sprite], lookup: List[Lookup]):
     """Searches through tiles and replaces duplicates."""
-    threshold = 1
+    threshold = 0.8
     for i in lookup:
         sprite = sprites[i.index]
         for j, other in enumerate(sprites):
