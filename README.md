@@ -30,7 +30,7 @@ The assembler program animates the frames, and for each frame loads
 the lookup table and arranges the tiles accordingly.
 
 ## Milestones
-![nes3d 2018-11-24](milestones/milestone0.webm)
+![nes3d 2018-11-24](milestones/rotate.gif)
 _Screen capture of rotating icosahedron_
 
 ![nes3d 2018-11-17](milestones/screenshot-2018-11-17.png)
