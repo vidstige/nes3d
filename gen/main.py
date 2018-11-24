@@ -121,7 +121,7 @@ def main():
 
     # write sprite sheet
     with open('image.chr', 'wb') as f:
-        npchr.write(f, sprite_sheet)
+        f.write(npchr.write(sprite_sheet))
 
     # write lookup tables
     with open('lookup.bin', 'wb') as f:
