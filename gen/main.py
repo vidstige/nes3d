@@ -116,7 +116,7 @@ def main():
     repack(tiles, lookup)
 
     # downsample to 2-bits
-    sprite_sheet = image.quantize(image.intensity(np.vstack(tiles)), bits=2)
+    sprite_sheet = image.quant2(image.intensity(np.vstack(tiles)), bits=2)
     
 
     # write sprite sheet

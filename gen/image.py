@@ -22,8 +22,19 @@ def quantize(img: np.array, bits: int) -> np.array:
     return (img * high).astype(_type_for_bit_width(bits))
 
 
-#def downsample(img: np.array, bits: int) -> np.array:
-#    return ((img+1) // (256 // (1 << bits))).astype('uint8')
+def quant2(img: np.array, bits: int) -> np.array:
+    """Quantize image by maximizing spread of intensities"""
+    pixels = list(sorted(img.ravel()))
+    n = 1 << bits
+
+    def f(x):
+        for i in range(n - 1):
+            index = (i + 1) * (len(pixels) - 1) // n
+            if x <= pixels[index]:
+                return i
+        return n - 1
+
+    return np.vectorize(f)(img)
 
 
 def tile(img: np.array, shape: Tuple[int, int]) -> Sequence[np.array]:
