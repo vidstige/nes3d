@@ -23,30 +23,36 @@ def make_lookup(start: int, n: int) -> List[Lookup]:
     return [Lookup(i) for i in range(start, start + n)]
 
 
+def diff(a: np.array, b: np.array) -> float:
+    d = a - b
+    return np.linalg.norm(d)
+
+
 def replace_duplicates(sprites: List[Sprite], lookup: List[Lookup]):
     """Searches through tiles and replaces duplicates."""
+    threshold = 1
     for i in lookup:
         sprite = sprites[i.index]
         for j, other in enumerate(sprites):
             # exact match
-            if (sprite == other).all():
+            if diff(sprite, other) < threshold:
                 i.index = j
                 i.horizontal = False
                 i.vertical = False
                 break
             # upside down
-            if (np.flip(sprite, 1) == other).all():
+            if diff(np.flip(sprite, 1), other) < threshold:
                 i.index = j
                 i.horizontal = False
                 i.vertical = True
                 break
             # left-right
-            if (np.flip(sprite, 0) == other).all():
+            if diff(np.flip(sprite, 0), other) < threshold:
                 i.index = j
                 i.horizontal = True
                 i.vertical = False
                 break
-            if (np.flip(np.flip(sprite, 0), 1) == other).all():
+            if diff(np.flip(np.flip(sprite, 0), 1), other) < threshold:
                 i.index = j
                 i.horizontal = True
                 i.vertical = True
@@ -106,13 +112,12 @@ def main():
     
     lookup = make_lookup(0, len(tiles))
 
-    # downsample to 2-bits
-    tiles = [image.quantize(image.intensity(t), bits=2) for t in tiles]
-
     replace_duplicates(tiles, lookup)
     repack(tiles, lookup)
 
-    sprite_sheet = np.vstack(tiles)
+    # downsample to 2-bits
+    sprite_sheet = image.quantize(image.intensity(np.vstack(tiles)), bits=2)
+    
 
     # write sprite sheet
     with open('image.chr', 'wb') as f:
