@@ -269,12 +269,16 @@ PaletteData:
   ;; IRQ Vector: Triggered from some mapper chips or audio interrupts
   .dw 0                         ; location of external IRQ interrupt.
 
+
 ;;; BANK 2 AND OUR PICTURE DATA
   ;; Bank 2 will be starting at $0000 and in it we will include our picture data for backgrounds and sprites
 
   .bank 2                       ; Change to bank 2
   .org $0000                    ; start at $0000
-  .incbin "gen/image.chr"
+  .incbin "gen/image-0000.chr"
+
+  .org $1000                    ; start at $1000
+  .incbin "gen/image-1000.chr"
 
 Counter:
   .rs 1

@@ -9,4 +9,5 @@ __pycache__/
 
 # game data
 /lookup.bin
-/image.chr
+/image-0000.chr
+/image-1000.chr

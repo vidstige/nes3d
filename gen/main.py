@@ -80,7 +80,7 @@ def repack(sprites: List[Sprite], lookup: List[Lookup]):
 def pack_lookup(lookup: List[Lookup]) -> bytes:
     result = bytearray()
     for l in lookup:
-        result.append(l.index << 1)
+        result.append(l.index & 0xff)
         result.append(l.horizontal << 7 | l.vertical << 6)
     return bytes(result)
 
@@ -95,7 +95,7 @@ def main():
     w = 64
     h = 64
 
-    n = 16
+    n = 32
     tiles = []
     for i in range(n):
         im = np.zeros((h, w, 4))
@@ -116,12 +116,14 @@ def main():
     repack(tiles, lookup)
 
     # downsample to 2-bits
-    sprite_sheet = image.quant2(image.intensity(np.vstack(tiles)), bits=2)
-    
+    # write sprite sheets
+    low_bank = image.quant2(image.intensity(np.vstack(tiles[0::2])), bits=2)
+    with open('image-0000.chr', 'wb') as f:
+        f.write(npchr.write(low_bank))
 
-    # write sprite sheet
-    with open('image.chr', 'wb') as f:
-        f.write(npchr.write(sprite_sheet))
+    high_bank = image.quant2(image.intensity(np.vstack(tiles[1::2])), bits=2)
+    with open('image-1000.chr', 'wb') as f:
+        f.write(npchr.write(high_bank))
 
     # write lookup tables
     with open('lookup.bin', 'wb') as f:
