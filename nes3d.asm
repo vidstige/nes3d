@@ -209,7 +209,7 @@ Idle:
   LDX #$00
 Idle2:
   INX 
-  CPX #$70
+  CPX #$50
   BNE Idle2
 
   INY

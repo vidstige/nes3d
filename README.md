@@ -2,28 +2,24 @@
 
 Displays 3D model on a Nintendo Entertainment System (NES)
 
-### Software renderer
-
+## Software renderer
 For precise pixel control, a purpose built software renderer purely
-python is included.
+in python is included.
 
-### Layout
+## Layout
+Once all full color 3D frames at target resolution has been
+rendered, it's
 
-Once a full color 3D at target resolution has been rendered, it's
+1. Tiled into 8x16 tiles
+2. Similar tiles are found
+3. Similar tiles are merged
+4. Tiles are adjusted for optimal fit to desired frames
 
-* Resampled to 2-bit color
-* Tiled into 8x16 blocks
-
-Tiles are then searched for duplicates, as well as mirror duplicates as the NES hardware can mirror tiles on the fly.
-
-Each memory bank only fits 2k of data, or 128 tiles and a full frame
-need 8x8 = 64 tiles. Tiles are arranged to fix the maximum number of
-tiles belonging to a single frame per bank. Also outputted is a look
-up table, used to find for each frame
-
-* What bank to use
-* List of the 64 tiles to show
-* ...and which of those to flip horizontally and/or vertically
+Finally, the color space is stretched to utlize the four bits to
+the maximum extent, and then lastly downsampled to four bits. When
+the bitmap data has been computed, it's saved into two chr files
+understood by the assembler - One for the low bank and one for the
+high bank.
 
 ### Assembler program
 The assembler program animates the frames, and for each frame loads
@@ -31,6 +27,7 @@ the lookup table and arranges the tiles accordingly.
 
 ## Milestones
 ![nes3d 2018-11-24](milestones/rotate.gif)
+
 _Screen capture of rotating icosahedron_
 
 ![nes3d 2018-11-17](milestones/screenshot-2018-11-17.png)
