@@ -26,13 +26,11 @@ The assembler program animates the frames, and for each frame loads
 the lookup table and arranges the tiles accordingly.
 
 ## Milestones
+Video of nes3d running on actual [NES Hardware](milestones/hardware.mp4)
+
 ![nes3d 2018-11-24](milestones/rotate.gif)
 
 _Screen capture of rotating icosahedron_
-
-![nes3d 2018-11-17](milestones/screenshot-2018-11-17.png)
-
-_Screenshot of actual nes3d program running in emulator_
 
 ![3d gif](milestones/renderer-2018-11-17.png)
 
