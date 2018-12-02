@@ -2,7 +2,8 @@
 *.pyc
 __pycache__/
 
-/images/
+
+/cache/
 /out.gif
 /image.png
 /image-??.png

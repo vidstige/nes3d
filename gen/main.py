@@ -1,4 +1,6 @@
+import hashlib
 from typing import List, Tuple
+import os
 
 import numpy as np
 from pygl import render, Model
@@ -6,6 +8,12 @@ import numgl
 import png
 import image
 import npchr
+
+
+def md5(b: bytes) -> str:
+    m = hashlib.md5()
+    m.update(b)
+    return m.digest().hex()[:7]
 
 
 Sprite = np.array
@@ -98,14 +106,21 @@ def main():
     n = 32
     tiles = []
     for i in range(n):
-        im = np.zeros((h, w, 4))
         a = 2*np.pi * i / n
         eye = np.array([np.sin(a), 0, np.cos(a)])
         projection = numgl.lookat(eye, target, up)
-        render(im, cube, projection)
+        projection_hash = md5(projection.data.tobytes())
+        cache_file = 'cache/render-{hash}.npy'.format(hash=projection_hash)
+        if os.path.isfile(cache_file):
+            im = np.load(cache_file)
+        else:
+            im = np.zeros((h, w, 4))
+            render(im, cube, projection)
+            os.makedirs('cache/', exist_ok=True)
+            np.save(cache_file, im)
 
-        with open('image-{:02}.png'.format(i), 'wb') as f:
-            f.write(png.write(image.quantize(im, bits=8).tobytes(), w, h))
+        #with open('image-{:02}.png'.format(i), 'wb') as f:
+        #    f.write(png.write(image.quantize(im, bits=8).tobytes(), w, h))
 
         large = (8, 16)
         tiles.extend(image.tile(im, shape=large))
