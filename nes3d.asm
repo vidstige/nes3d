@@ -172,18 +172,36 @@ LoadPalettesLoop:
   LDA #%00010000                ; enable sprites, intensify blues
   STA $2001
 
-  ;; assign sprites
-Init:
-  LDA #0
-  STA Counter
+  ; Initialize pointer
+  JSR InitPointer
 
+  ; Start with frame 0
+  LDA #$00
+  STA Frame
+
+Forever:
+  JMP Forever
+
+InitPointer:
   CLC
   LDA #LOW(Lookup)
   STA LookupPointer
   LDA #HIGH(Lookup)
   STA LookupPointer+1
 
-Forever:
+  CLC
+  LDA #$00
+  STA Counter
+
+  RTS
+
+NMI:
+  ;; SPRITE DMA
+  ;; The fastest and easiest way to transfer your sprites to memory is using DMA (Direct Memory Access). This just means a block of RAM is copied from CPU memory
+  ;; to the PPU sprite memory. The on-board RAM space from $0200-02FF is usually used for this purpose. To start the transfer, two bytes need to be written to the PPU ports
+  ;; Like all graphics updates, this needs to be done at the beginning of the VBlank period, so it will go in the NMI section of the code:
+  PHA
+
   LDX #$00  ; sprite number address offset
   LDY #$00  ; tile number
   CLC
@@ -204,17 +222,21 @@ SpriteLoop:
   CPY #$40
   BNE SpriteLoop
 
-  LDY #$00
-Idle:
-  LDX #$00
-Idle2:
-  INX 
-  CPX #$50
-  BNE Idle2
+  ; Start DMA
+  LDA #$00
+  STA $2003                     ; set the low byte (00) of the RAM address
+  LDA #$02
+  STA $4014                     ; set the high byte (02) of the RAM address, start the transfer
+  
+  ; Increase frame
+  INC Frame
+  
+  LDA Frame
+  CMP #6
+  BNE Skip
 
-  INY
-  CPY #$ff
-  BNE Idle
+  LDA #$00
+  STA Frame
 
   CLC
   LDA LookupPointer
@@ -225,24 +247,13 @@ Idle2:
   STA LookupPointer+1
 
   INC Counter
+
   LDA Counter
   CMP #$10
-  BNE Forever
-  
+  BNE Skip
+  JSR InitPointer
+Skip:
 
-  JMP Init
-
-NMI:
-  ;; SPRITE DMA
-  ;; The fastest and easiest way to transfer your sprites to memory is using DMA (Direct Memory Access). This just means a block of RAM is copied from CPU memory
-  ;; to the PPU sprite memory. The on-board RAM space from $0200-02FF is usually used for this purpose. To start the transfer, two bytes need to be written to the PPU ports
-  ;; Like all graphics updates, this needs to be done at the beginning of the VBlank period, so it will go in the NMI section of the code:
-  PHA
-  LDA #$00
-  STA $2003                     ; set the low byte (00) of the RAM address
-  LDA #$02
-  STA $4014                     ; set the high byte (02) of the RAM address, start the transfer
-  
   PLA
   RTI                           ; Return from interrupt
 
@@ -280,8 +291,8 @@ PaletteData:
   .org $1000                    ; start at $1000
   .incbin "gen/image-1000.chr"
 
-Counter:
-  .rs 1
+Counter: .db 0  ; which frame are we on?
+Frame:  .db 0  ; count NMIs
 
   .zp
 LookupPointer:
