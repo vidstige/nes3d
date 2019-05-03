@@ -179,8 +179,75 @@ LoadPalettesLoop:
   LDA #$00
   STA Frame
 
+  ; Init sound
+  lda #$30
+  sta $4000
+  sta $4004
+  lda #$08
+  sta $4001
+  sta $4005
+  lda #$00
+  sta $4002
+  sta $4006
+  lda #$00
+  sta $4003
+  sta $4007
+  
+  lda #$0f
+  sta $4015
+  lda #$40
+  sta $4017
+
+  ; Play C
+  ;lda #170
+  ;sta $4002
+
+  ;lda #1
+  ;sta $4003
+
+  ;lda #%10111111
+  ;sta $4000
+
 Forever:
   JMP Forever
+
+PlayMusic:
+  ; Did note finish?
+  LDA Pulse0Counter
+  CMP #$00
+  BNE KeepGoing
+
+  ; Reset note counter
+  LDA #$10
+  STA Pulse0Counter
+
+  ; Change tone
+  ; Get next tone
+  LDX Pulse0
+  LDA Music, X
+
+  ; TODO: Compute exactly what to subtract here
+  CLC
+  SBC #40  ; midi middle C is 60, while periodTable starts at low A
+  TAX
+
+  ; Play tone in X
+  lda periodTableLo, X
+  sta $4002
+
+  lda periodTableHi, X
+  sta $4003
+
+  lda #%10111111
+  sta $4000
+
+  ; Go to next tone
+  INC Pulse0
+
+KeepGoing:
+  DEC Pulse0Counter
+  RTS
+
 
 InitPointer:
   CLC
@@ -252,7 +319,11 @@ SpriteLoop:
   CMP #$10
   BNE Skip
   JSR InitPointer
+
 Skip:
+
+  ; Play music
+  JSR PlayMusic
 
   PLA
   RTI                           ; Return from interrupt
@@ -269,6 +340,63 @@ Lookup:
 PaletteData:
   .db $30,$31,$32,$33,$0F,$35,$36,$37,$0F,$39,$3A,$3B,$0F,$3D,$3E,$0F  ;background palette data
   .db $20,$14,$24,$34,$0F,$02,$38,$3C,$0F,$1C,$15,$14,$0F,$02,$38,$3C  ;sprite palette data
+
+
+Music:
+  .byte $60, $61, $62, $63, $64, $65, $66, $67
+  .byte $60, $61, $62, $63, $64, $65, $66, $67
+  .byte $60, $61, $62, $63, $64, $65, $66, $67
+  .byte $60, $61, $62, $63, $64, $65, $66, $67
+  .byte $60, $61, $62, $63, $64, $65, $66, $67
+  .byte $60, $61, $62, $63, $64, $65, $66, $67
+  .byte $60, $61, $62, $63, $64, $65, $66, $67
+  .byte $60, $61, $62, $63, $64, $65, $66, $67
+  .byte $60, $61, $62, $63, $64, $65, $66, $67
+  .byte $60, $61, $62, $63, $64, $65, $66, $67
+  .byte $60, $61, $62, $63, $64, $65, $66, $67
+  .byte $60, $61, $62, $63, $64, $65, $66, $67
+  .byte $60, $61, $62, $63, $64, $65, $66, $67
+  .byte $60, $61, $62, $63, $64, $65, $66, $67
+  .byte $60, $61, $62, $63, $64, $65, $66, $67
+  .byte $60, $61, $62, $63, $64, $65, $66, $67
+  .byte $60, $61, $62, $63, $64, $65, $66, $67
+  .byte $60, $61, $62, $63, $64, $65, $66, $67
+  .byte $60, $61, $62, $63, $64, $65, $66, $67
+  .byte $60, $61, $62, $63, $64, $65, $66, $67
+  .byte $60, $61, $62, $63, $64, $65, $66, $67
+  .byte $60, $61, $62, $63, $64, $65, $66, $67
+  .byte $60, $61, $62, $63, $64, $65, $66, $67
+  .byte $60, $61, $62, $63, $64, $65, $66, $67
+  .byte $60, $61, $62, $63, $64, $65, $66, $67
+  .byte $60, $61, $62, $63, $64, $65, $66, $67
+  .byte $60, $61, $62, $63, $64, $65, $66, $67
+  .byte $60, $61, $62, $63, $64, $65, $66, $67
+  .byte $60, $61, $62, $63, $64, $65, $66, $67
+  .byte $60, $61, $62, $63, $64, $65, $66, $67
+  .byte $60, $61, $62, $63, $64, $65, $66, $67
+  .byte $60, $61, $62, $63, $64, $65, $66, $67
+
+  ;.incbin "gen/music.bin"
+
+; notes
+periodTableLo:
+  .byte $f1,$7f,$13,$ad,$4d,$f3,$9d,$4c,$00,$b8,$74,$34
+  .byte $f8,$bf,$89,$56,$26,$f9,$ce,$a6,$80,$5c,$3a,$1a
+  .byte $fb,$df,$c4,$ab,$93,$7c,$67,$52,$3f,$2d,$1c,$0c
+  .byte $fd,$ef,$e1,$d5,$c9,$bd,$b3,$a9,$9f,$96,$8e,$86
+  .byte $7e,$77,$70,$6a,$64,$5e,$59,$54,$4f,$4b,$46,$42
+  .byte $3f,$3b,$38,$34,$31,$2f,$2c,$29,$27,$25,$23,$21
+  .byte $1f,$1d,$1b,$1a,$18,$17,$15,$14
+
+periodTableHi:
+  .byte $07,$07,$07,$06,$06,$05,$05,$05,$05,$04,$04,$04
+  .byte $03,$03,$03,$03,$03,$02,$02,$02,$02,$02,$02,$02
+  .byte $01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01,$01
+  .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+  .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+  .byte $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+  .byte $00,$00,$00,$00,$00,$00,$00,$00
+
 
   ;; There are 3 times when the NES processor will interrupt your code and jump to a new location. These vectors, held in PRG ROM tell the processor
   ;; where to go when that happens.
@@ -293,6 +421,10 @@ PaletteData:
 
 Counter: .db 0  ; which frame are we on?
 Frame:  .db 0  ; count NMIs
+
+; Pulse0
+Pulse0: .db 0
+Pulse0Counter: .db 5
 
   .zp
 LookupPointer:

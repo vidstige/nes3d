@@ -1,1 +1,1 @@
-open -a Nestopia nes3d.nes
+open -a Nestopia $@

@@ -7,22 +7,23 @@
 	
 	.bank 1
 	.org $FFFA
-	.dw 0 ; no VBlank routine
+	.dw 0 ; no NMI routine
 	.dw Start 
-	.dw 0 ; we'll get to this at a later time
+	.dw Irq
 
 	.bank 0
 	.org $8000
 
 ; C = 261.63 Hz
 ; raw period = 111860.8/frequency - 1
+    cli  ; enable interrupts
 
 ; note that I just copy/pasted code from the register sections
 Start:
     jsr init_apu
 
     ; sweep
-    ;lda #$ff
+    ;lda #$55
     ;sta $4001
     
     lda #170
@@ -37,18 +38,27 @@ Start:
 infinite:
 	jmp infinite
 
+Irq:
+    lda #00
+    sta $4002
+
+    lda #00
+    sta $4003
+    rti
+
 init_apu:
         ; Init $4000-4013
         ldy #$13
-.loop:  lda .regs,y
-        sta $4000,y
+.loop:  lda .regs, y
+        sta $4000, y
         dey
         bpl .loop
  
         ; We have to skip over $4014 (OAMDMA)
         lda #$0f
         sta $4015
-        lda #$40
+        ;lda #$40
+        lda #$00  ; enable APU Frame Counter interrupt
         sta $4017
    
         rts
