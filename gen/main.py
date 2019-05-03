@@ -67,6 +67,37 @@ def replace_duplicates(sprites: List[Sprite], lookup: List[Lookup]):
                 break
 
 
+def compress(sprites: List[Sprite], lookups: List[Lookup], limit: int) -> Tuple[List[Sprite], List[Lookup]]:
+    # 1. Find all diffs, lookup vs flipped ground truth
+    FLIPS = [
+        (False, False),
+        (True, False),
+        (False, True),
+        (True, True)
+    ]
+    #diffs = []
+    for sprite in sprites:
+        for horizontal, vertical in FLIPS:
+            s = sprite
+            if horizontal:
+                s = np.flip(s, 0)
+            if vertical:
+                s = np.flip(s, 1)
+            
+            for l in lookups:
+                d = diff(s, sprites[l.index])
+                print(d)
+
+    #for d in 
+    #print(diffs)
+
+    # 2. Find suitable threshold that meets target, e.g. 8kb
+    # 3. Compute new lookups
+    # 4. Compute optimal tiles for new lookups given ground thruth
+    # 5. Win
+    return sprites, lookups
+
+
 def repack(sprites: List[Sprite], lookup: List[Lookup]):
     """Remove unused sprites"""
     remap = {}
@@ -127,8 +158,9 @@ def main():
     
     lookup = make_lookup(0, len(tiles))
 
-    replace_duplicates(tiles, lookup)
-    repack(tiles, lookup)
+    #replace_duplicates(tiles, lookup)
+    #repack(tiles, lookup)
+    tiles, lookup = compress(tiles, lookup, limit=8*1024)
 
     # downsample to 2-bits
     # write sprite sheets
